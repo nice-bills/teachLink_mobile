@@ -286,3 +286,12 @@ EXPO_PUBLIC_ENABLE_PUSH_NOTIFICATIONS=true
 > ⚠️ Never commit your `.env` file. It is listed in `.gitignore`.
 
 See [DEPLOY.md](./DEPLOY.md) for platform-specific setup (Google Play & App Store), build profiles, troubleshooting, and security notes.
+## Analytics event throttling
+
+High-frequency analytics events (for example, carousel scroll telemetry) are tagged with:
+
+- `event_category: 'high_frequency'`
+- `event_name: '<stable_event_key>'`
+
+The mobile analytics service throttles those tagged events to **10 events/second per `event_name`**.
+This keeps behavioral trends useful while reducing analytics event volume and downstream ingestion cost.
