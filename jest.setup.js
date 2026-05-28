@@ -14,7 +14,6 @@ jest.mock('react-native', () => ({
   SafeAreaView: 'SafeAreaView',
   KeyboardAvoidingView: 'KeyboardAvoidingView',
   ScrollView: 'ScrollView',
-  KeyboardAvoidingView: 'KeyboardAvoidingView',
   Switch: 'Switch',
   TextInput: 'TextInput',
   ActivityIndicator: 'ActivityIndicator',
@@ -295,8 +294,6 @@ jest.mock('expo-linking', () => ({
   getInitialURL: jest.fn(() => Promise.resolve(null)),
 }));
 
-
-
 // Mock @sentry/react-native globally to support offline/logger testing
 jest.mock('@sentry/react-native', () => ({
   init: jest.fn(),
@@ -313,6 +310,16 @@ jest.mock('@sentry/react-native', () => ({
   },
   SDK_NAME: 'sentry.javascript.react-native',
   SDK_VERSION: '5.36.0',
+}));
+
+// Mock expo-sensors globally to avoid native device sensor requirements in Jest
+jest.mock('expo-sensors', () => ({
+  LightSensor: {
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+    removeAllListeners: jest.fn(),
+    setUpdateInterval: jest.fn(),
+    isAvailableAsync: jest.fn(() => Promise.resolve(true)),
+  },
 }));
 
 // Mock react-native-safe-area-context to prevent css-interop Safe Area Provider errors in tests
@@ -358,11 +365,31 @@ jest.mock('react-native-gesture-handler', () => {
         failOffsetY: jest.fn().mockReturnThis(),
         onStart: jest.fn().mockReturnThis(),
         onUpdate: jest.fn().mockReturnThis(),
+        onChange: jest.fn().mockReturnThis(),
         onEnd: jest.fn().mockReturnThis(),
+        onFinalize: jest.fn().mockReturnThis(),
       }),
+      LongPress: () => ({
+        minDuration: jest.fn().mockReturnThis(),
+        maxDist: jest.fn().mockReturnThis(),
+        onStart: jest.fn().mockReturnThis(),
+        onUpdate: jest.fn().mockReturnThis(),
+        onChange: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+        onFinalize: jest.fn().mockReturnThis(),
+      }),
+      Pinch: () => ({
+        onStart: jest.fn().mockReturnThis(),
+        onUpdate: jest.fn().mockReturnThis(),
+        onChange: jest.fn().mockReturnThis(),
+        onEnd: jest.fn().mockReturnThis(),
+        onFinalize: jest.fn().mockReturnThis(),
+      }),
+      Simultaneous: RN.View,
     },
     GestureDetector: RN.View,
     Swipeable: RN.View,
+    gestureHandlerRootHOC: jest.fn(c => c),
   };
 });
 

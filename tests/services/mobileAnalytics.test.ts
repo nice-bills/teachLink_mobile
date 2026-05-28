@@ -105,36 +105,37 @@ describe('mobileAnalyticsService', () => {
     });
 
     it('throttles high-frequency events to at most 10 per second per event name', () => {
-        const nowSpy = jest.spyOn(Date, 'now');
-        nowSpy
-            .mockReturnValueOnce(1000)
-            .mockReturnValueOnce(1020)
-            .mockReturnValueOnce(1060)
-            .mockReturnValueOnce(1110);
+      jest.spyOn(Math, 'random').mockReturnValue(0.05);
+      const nowSpy = jest.spyOn(Date, 'now');
+      nowSpy
+        .mockReturnValueOnce(1000)
+        .mockReturnValueOnce(1020)
+        .mockReturnValueOnce(1060)
+        .mockReturnValueOnce(1110);
 
-        mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
-            event_category: 'high_frequency',
-            event_name: 'lesson_carousel_scroll',
-        });
-        mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
-            event_category: 'high_frequency',
-            event_name: 'lesson_carousel_scroll',
-        });
-        mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
-            event_category: 'high_frequency',
-            event_name: 'lesson_carousel_scroll',
-        });
-        mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
-            event_category: 'high_frequency',
-            event_name: 'lesson_carousel_scroll',
-        });
+      mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
+        event_category: 'high_frequency',
+        event_name: 'lesson_carousel_scroll',
+      });
+      mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
+        event_category: 'high_frequency',
+        event_name: 'lesson_carousel_scroll',
+      });
+      mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
+        event_category: 'high_frequency',
+        event_name: 'lesson_carousel_scroll',
+      });
+      mobileAnalyticsService.trackEvent(AnalyticsEvent.PERFORMANCE_METRIC, {
+        event_category: 'high_frequency',
+        event_name: 'lesson_carousel_scroll',
+      });
 
-        const analyticsCalls = (logger.info as jest.Mock).mock.calls.filter(call =>
-            String(call[0]).includes('Event: performance_metric')
-        );
+      const analyticsCalls = (appLogger.info as jest.Mock).mock.calls.filter(call =>
+        String(call[0]).includes('Event: performance_metric')
+      );
 
-        expect(analyticsCalls).toHaveLength(2);
-        nowSpy.mockRestore();
+      expect(analyticsCalls).toHaveLength(2);
+      nowSpy.mockRestore();
     });
   });
 });
