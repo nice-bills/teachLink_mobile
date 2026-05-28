@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import mobileAnalyticsService from './mobileAnalytics';
-import logger from '../utils/logger';
+
+import { mobileAnalyticsService } from './mobileAnalytics';
+import { logger } from '../utils/logger';
 import { AnalyticsEvent, EventProperties } from '../utils/trackingEvents';
 
 const ASSIGNMENT_STORAGE_PREFIX = '@teachlink_ab_assignment';
@@ -75,7 +76,7 @@ class ABTestingService {
 
   public async getAssignment(
     experimentId: string,
-    assignmentKey: string = 'anonymous',
+    assignmentKey: string = 'anonymous'
   ): Promise<ExperimentAssignment | null> {
     const experiment = this.experiments.get(experimentId);
     if (!experiment || !experiment.enabled) {
@@ -108,7 +109,7 @@ class ABTestingService {
   public async trackExposure(
     experimentId: string,
     assignmentKey: string = 'anonymous',
-    properties?: EventProperties,
+    properties?: EventProperties
   ): Promise<ExperimentAssignment | null> {
     const assignment = await this.getAssignment(experimentId, assignmentKey);
     if (!assignment) {
@@ -130,7 +131,7 @@ class ABTestingService {
     name: string,
     value: number,
     assignmentKey: string = 'anonymous',
-    properties?: EventProperties,
+    properties?: EventProperties
   ): Promise<VariantMetric | null> {
     const assignment = await this.getAssignment(experimentId, assignmentKey);
     if (!assignment) {
@@ -159,7 +160,7 @@ class ABTestingService {
   public calculateMetricSignificance(
     controlSamples: number[],
     variantSamples: number[],
-    alpha: number = DEFAULT_ALPHA,
+    alpha: number = DEFAULT_ALPHA
   ): SignificanceResult {
     if (controlSamples.length < 2 || variantSamples.length < 2) {
       throw new Error('At least two samples are required for each variant.');
@@ -170,7 +171,7 @@ class ABTestingService {
     const controlVariance = sampleVariance(controlSamples, controlMean);
     const variantVariance = sampleVariance(variantSamples, variantMean);
     const standardError = Math.sqrt(
-      controlVariance / controlSamples.length + variantVariance / variantSamples.length,
+      controlVariance / controlSamples.length + variantVariance / variantSamples.length
     );
     const zScore = standardError === 0 ? 0 : (variantMean - controlMean) / standardError;
     const pValue = twoTailedPValue(zScore);
@@ -191,7 +192,7 @@ class ABTestingService {
     controlTotal: number,
     variantConversions: number,
     variantTotal: number,
-    alpha: number = DEFAULT_ALPHA,
+    alpha: number = DEFAULT_ALPHA
   ): ConversionSignificanceResult {
     if (controlTotal <= 0 || variantTotal <= 0) {
       throw new Error('Conversion totals must be greater than zero.');
@@ -199,10 +200,9 @@ class ABTestingService {
 
     const controlRate = controlConversions / controlTotal;
     const variantRate = variantConversions / variantTotal;
-    const pooledRate =
-      (controlConversions + variantConversions) / (controlTotal + variantTotal);
+    const pooledRate = (controlConversions + variantConversions) / (controlTotal + variantTotal);
     const standardError = Math.sqrt(
-      pooledRate * (1 - pooledRate) * (1 / controlTotal + 1 / variantTotal),
+      pooledRate * (1 - pooledRate) * (1 / controlTotal + 1 / variantTotal)
     );
     const zScore = standardError === 0 ? 0 : (variantRate - controlRate) / standardError;
     const pValue = twoTailedPValue(zScore);
@@ -220,7 +220,7 @@ class ABTestingService {
 
   private async getStoredAssignment(
     storageKey: string,
-    experiment: ExperimentConfig,
+    experiment: ExperimentConfig
   ): Promise<ExperimentAssignment | null> {
     try {
       const raw = await AsyncStorage.getItem(storageKey);
@@ -304,7 +304,7 @@ function erf(value: number): number {
   const a5 = 1.061405429;
   const p = 0.3275911;
   const t = 1 / (1 + p * x);
-  const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x));
+  const y = 1 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
 
   return sign * y;
 }

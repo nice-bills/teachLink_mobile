@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import abTestingService, { ExperimentConfig } from '../../src/services/abTesting';
-import mobileAnalyticsService from '../../src/services/mobileAnalytics';
+
+import { abTestingService, ExperimentConfig } from '../../src/services/abTesting';
+import { mobileAnalyticsService } from '../../src/services/mobileAnalytics';
 import {
   getImagePrefetchExperimentDecision,
   IMAGE_PREFETCH_EXPERIMENT_ID,
@@ -44,14 +45,14 @@ describe('abTestingService', () => {
     expect(first?.variantId).toBe(second?.variantId);
     expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
       '@teachlink_ab_assignment:button_render_v1:user-123',
-      expect.stringContaining('"assignmentKey":"user-123"'),
+      expect.stringContaining('"assignmentKey":"user-123"')
     );
     expect(mockAnalytics.trackEvent).toHaveBeenCalledWith(
       AnalyticsEvent.AB_ASSIGNMENT,
       expect.objectContaining({
         ab_experiment_id: experiment.id,
         ab_assignment_key: 'user-123',
-      }),
+      })
     );
   });
 
@@ -62,7 +63,7 @@ describe('abTestingService', () => {
         variantId: 'optimized',
         assignedAt: '2026-05-28T00:00:00.000Z',
         assignmentKey: 'user-456',
-      }),
+      })
     );
 
     const assignment = await abTestingService.getAssignment(experiment.id, 'user-456');
@@ -83,7 +84,7 @@ describe('abTestingService', () => {
         screen: 'home',
         ab_experiment_id: experiment.id,
         ab_variant_id: assignment?.variantId,
-      }),
+      })
     );
   });
 
@@ -93,7 +94,7 @@ describe('abTestingService', () => {
       'render_duration',
       42,
       'user-101',
-      { component: 'PrimaryButton' },
+      { component: 'PrimaryButton' }
     );
 
     expect(metric).toEqual(
@@ -101,7 +102,7 @@ describe('abTestingService', () => {
         experimentId: experiment.id,
         name: 'render_duration',
         value: 42,
-      }),
+      })
     );
     expect(mockAnalytics.trackPerformance).toHaveBeenCalledWith(
       'render_duration',
@@ -110,14 +111,14 @@ describe('abTestingService', () => {
         component: 'PrimaryButton',
         ab_experiment_id: experiment.id,
         ab_variant_id: metric?.variantId,
-      }),
+      })
     );
   });
 
   it('calculates statistical significance for numeric performance samples', () => {
     const result = abTestingService.calculateMetricSignificance(
       [100, 102, 98, 101, 99],
-      [80, 81, 79, 82, 78],
+      [80, 81, 79, 82, 78]
     );
 
     expect(result.variantMean).toBeLessThan(result.controlMean);
@@ -143,7 +144,7 @@ describe('abTestingService', () => {
       expect.objectContaining({
         optimization: 'image_prefetch_delay',
         ab_experiment_id: IMAGE_PREFETCH_EXPERIMENT_ID,
-      }),
+      })
     );
   });
 
@@ -156,7 +157,7 @@ describe('abTestingService', () => {
       expect.objectContaining({
         prefetched_count: 6,
         ab_experiment_id: IMAGE_PREFETCH_EXPERIMENT_ID,
-      }),
+      })
     );
   });
 });

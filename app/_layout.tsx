@@ -101,7 +101,7 @@ const RootLayout = () => {
               router.replace(snapshot.route as any);
             },
           },
-        ],
+        ]
       );
     }
 

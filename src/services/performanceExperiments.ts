@@ -1,4 +1,4 @@
-import abTestingService, { ExperimentAssignment, ExperimentConfig } from './abTesting';
+import { abTestingService, ExperimentAssignment, ExperimentConfig } from './abTesting';
 
 export const IMAGE_PREFETCH_EXPERIMENT_ID = 'image_prefetch_delay_v1';
 
@@ -34,12 +34,12 @@ export interface ImagePrefetchExperimentDecision {
 }
 
 export async function getImagePrefetchExperimentDecision(
-  assignmentKey: string = 'anonymous',
+  assignmentKey: string = 'anonymous'
 ): Promise<ImagePrefetchExperimentDecision> {
   const assignment = await abTestingService.trackExposure(
     IMAGE_PREFETCH_EXPERIMENT_ID,
     assignmentKey,
-    { optimization: 'image_prefetch_delay' },
+    { optimization: 'image_prefetch_delay' }
   );
 
   return {
@@ -51,13 +51,13 @@ export async function getImagePrefetchExperimentDecision(
 export async function trackImagePrefetchMetric(
   durationMs: number,
   assignmentKey: string = 'anonymous',
-  prefetchedCount: number = 0,
+  prefetchedCount: number = 0
 ): Promise<void> {
   await abTestingService.trackMetric(
     IMAGE_PREFETCH_EXPERIMENT_ID,
     'image_prefetch_duration',
     durationMs,
     assignmentKey,
-    { prefetched_count: prefetchedCount },
+    { prefetched_count: prefetchedCount }
   );
 }

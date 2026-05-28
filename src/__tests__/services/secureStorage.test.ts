@@ -5,7 +5,6 @@ import { Platform } from 'react-native';
 import * as secureStorage from '../../services/secureStorage';
 import { appLogger } from '../../utils/logger';
 
-
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
 jest.mock('expo-secure-store');
@@ -166,7 +165,6 @@ describe('SecureStorage - Keychain/Keystore Verification #140', () => {
       mockSecureStore.setItemAsync.mockImplementationOnce(() =>
         Promise.reject(new Error('Keychain error'))
       );
-
 
       await expect(secureStorage.saveTokens('token', 'refresh', Date.now())).rejects.toThrow();
 

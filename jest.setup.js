@@ -125,10 +125,15 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(() => Promise.resolve()),
 }));
 
-// Mock expo-device
+// Mock expo-device.  __esModule: true prevents Babel's _interopRequireWildcard
+// from copying values at import time, so tests can mutate properties directly.
 jest.mock('expo-device', () => ({
+  __esModule: true,
   isDevice: true,
   deviceName: 'Test Device',
+  deviceYearClass: 2021,
+  totalMemory: 4 * 1024 * 1024 * 1024, // 4 GB — high-end default
+  modelName: 'Test Model',
 }));
 
 // Mock expo-constants
@@ -270,31 +275,18 @@ jest.mock('expo-notifications', () => ({
   PermissionStatus: { GRANTED: 'granted', DENIED: 'denied', UNDETERMINED: 'undetermined' },
 }));
 
-// Mock expo-device
-jest.mock('expo-device', () => ({
-  isDevice: true,
-  deviceName: 'Test Device',
+// Mock expo-battery
+jest.mock('expo-battery', () => ({
+  useLowPowerMode: jest.fn(() => false),
+  isLowPowerModeEnabledAsync: jest.fn(() => Promise.resolve(false)),
+  getBatteryLevelAsync: jest.fn(() => Promise.resolve(1)),
+  getPowerStateAsync: jest.fn(() =>
+    Promise.resolve({ batteryLevel: 1, batteryState: 1, lowPowerMode: false })
+  ),
+  addLowPowerModeListener: jest.fn(() => ({ remove: jest.fn() })),
 }));
 
-// Mock expo-constants
-jest.mock('expo-constants', () => ({
-  expoConfig: {
-    extra: {
-      eas: {
-        projectId: 'test-project-id',
-      },
-    },
-  },
-}));
-
-// Mock expo-linking
-jest.mock('expo-linking', () => ({
-  createURL: jest.fn(path => `teachlink://${path}`),
-  addEventListener: jest.fn(() => ({ remove: jest.fn() })),
-  getInitialURL: jest.fn(() => Promise.resolve(null)),
-}));
-
-// Mock @sentry/react-native globally to support offline/logger testing
+// Mock @sentry/react-native to prevent Jest environment failure
 jest.mock('@sentry/react-native', () => ({
   init: jest.fn(),
   wrap: jest.fn(component => component),
